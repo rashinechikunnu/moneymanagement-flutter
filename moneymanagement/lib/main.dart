@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:moneymanagement/model/category/category_model.dart';
+import 'package:moneymanagement/model/transaction/transaction_model.dart';
 import 'package:moneymanagement/screen/add_transaction/add_transaction_screen.dart';
 import 'package:moneymanagement/screen/home/home_screen.dart';
 
@@ -8,35 +9,32 @@ Future<void> main() async {
   // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
     // Initialize Hive with Flutter
     await Hive.initFlutter();
+
+    
 
     // Register adapters (only if not already registered)
     if (!Hive.isAdapterRegistered(CategoryTypeAdapter().typeId)) {
       Hive.registerAdapter(CategoryTypeAdapter());
     }
+
     if (!Hive.isAdapterRegistered(CategoryModelAdapter().typeId)) {
       Hive.registerAdapter(CategoryModelAdapter());
     }
 
-    // Open your Hive box before running the app
+    if (!Hive.isAdapterRegistered(TransactionModelAdapter().typeId)) {
+      Hive.registerAdapter(TransactionModelAdapter());
+    }
+
     await Hive.openBox<CategoryModel>('category_database');
+    await Hive.openBox<TransactionModel>('transaction_db');
+  
+    
+
 
     runApp(const MyApp());
-  } catch (e) {
-    debugPrint('Failed to initialize Hive: $e');
-    // Consider showing an error screen or fallback UI
-    runApp(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: Text('Failed to initialize app: $e'),
-          ),
-        ),
-      ),
-    );
-  }
+  
 }
 
 class MyApp extends StatelessWidget {
